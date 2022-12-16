@@ -28,7 +28,7 @@ https://gateway.marvel.com:443/v1/public/characters?apikey=YOUR_API_KEY
     "limit": 20,
     "total": 1562,
     "count": 20,
-    "results": [chasters and comic]
+    "results": [chasters and comics]
   }
 }
 ```
