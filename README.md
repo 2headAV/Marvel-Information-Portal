@@ -46,6 +46,9 @@ The application is made using the following technologies:
   
   *In the future, it is planned to add the `Redux Toolkit` to the project.*
 
+
+  UPDATE: Started transferring the project to `TypeScript`
+
   ## Install Dependencies
   ___
   To install dependencies, use the following command:
