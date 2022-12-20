@@ -6,9 +6,13 @@ import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/errorMessage';
 import './charList.scss';
 
-const CharList = (props) => {
+type CharListProps = {
+    onCharSelected: (id: number) => void
+}
 
-    const [charList, setCharList] = useState([]);
+const CharList: React.FC<CharListProps> = ({ onCharSelected }) => {
+
+    const [charList, setCharList] = useState<[]>([]);
     const [newItemLoading, setNewItemLoading] = useState(false);
     const [offset, setOffset] = useState(210);
     const [charEnded, setCharEnded] = useState(false);
@@ -19,14 +23,16 @@ const CharList = (props) => {
         onRequest(offset, true);
     }, [])
 
-    const onRequest = (offset, initial) => {
+    const onRequest = (offset: number, initial?: boolean) => {
         initial ? setNewItemLoading(false) : setNewItemLoading(true);
         getAllCharacters(offset)
             .then(onCharListLoaded);
     }
 
 
-    const onCharListLoaded = async (newCharList) => {
+    const onCharListLoaded = async (newCharList: []) => {
+
+        console.log(newCharList);
 
         let ended = false;
         if (newCharList.length < 9) {
@@ -39,44 +45,58 @@ const CharList = (props) => {
         setCharEnded(charEnded => ended);
     }
 
-    const itemRefs = useRef([]);
+    const itemRefs = useRef<HTMLLIElement[]>([]);
 
 
-    const focusOnItem = (id) => {
-        itemRefs.current.map(item => item.classList.remove('char__item_selected'));
-        itemRefs.current[id].classList.add('char__item_selected');
-        itemRefs.current[id].focus();
+    const focusOnItem = (id: number) => {
+        if (itemRefs.current) {
+            itemRefs.current.map(item => item.classList.remove('char__item_selected'));
+            itemRefs.current[id].classList.add('char__item_selected');
+            itemRefs.current[id].focus();
+        }
     }
 
+    type CharItem = {
+        id: number;
+        name: string;
+        description: string;
+        thumbnail: string;
+        homepage: string;
+        wiki: string;
+        comics: [
+            { name: string | null }
+        ];
+    }
 
-    function renderItems(arr) {
-        const items = arr.map((item, i) => {
-            let imgStyle = { 'objectFit': 'cover' };
+    function renderItems(arr: CharItem[]) {
+        const items = arr.map((item, i: number) => {
+            let imgStyle = {};
             if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
                 imgStyle = { 'objectFit': 'unset' };
+            } else {
+                imgStyle = { 'objectFit': 'cover' };
             }
 
             return (
-                <CSSTransition in={item.id} timeout={500} classNames='char__item'>
-                    <li
-                        className="char__item"
-                        tabIndex={0}
-                        ref={el => itemRefs.current[i] = el}
-                        key={item.id}
-                        onClick={() => {
-                            props.onCharSelected(item.id);
+                <li
+                    className="char__item"
+                    tabIndex={0}
+                    // @ts-ignore
+                    ref={el => itemRefs.current[i] = el}
+                    key={item.id}
+                    onClick={() => {
+                        onCharSelected(item.id);
+                        focusOnItem(i);
+                    }}
+                    onKeyPress={(e) => {
+                        if (e.key === ' ' || e.key === 'Enter') {
+                            onCharSelected(item.id);
                             focusOnItem(i);
-                        }}
-                        onKeyPress={(e) => {
-                            if (e.key === ' ' || e.key === 'Enter') {
-                                props.onCharSelected(item.id);
-                                focusOnItem(i);
-                            }
-                        }} >
-                        <img src={item.thumbnail} alt={item.name} style={imgStyle} />
-                        <div className="char__name">{item.name}</div>
-                    </li>
-                </CSSTransition>
+                        }
+                    }} >
+                    <img src={item.thumbnail} alt={item.name} style={imgStyle} />
+                    <div className="char__name">{item.name}</div>
+                </li>
             )
         });
 

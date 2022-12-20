@@ -16,12 +16,29 @@ const useMarvelService = () => {
    }
 
 
-   const getCharacter = async (id) => {
+   const getCharacter = async (id: number) => {
       const res = await request(`${_apiBase}characters/${id}?${_apiKey}`);
       return _transformCharacter(res.data.results[0]);
    }
 
-   const _transformCharacter = (char) => {
+
+   //! Исправить ANY
+
+   interface Char {
+      name: string;
+      description: string;
+      thumbnail: {
+         path: string;
+         extension: string;
+      };
+      urls: any
+      id: number;
+      comics: {
+         items: string
+      }
+   }
+
+   const _transformCharacter = (char: Char) => {
       return {
          name: char.name,
          description: char.description ? `${char.description.slice(0, 210)}...` : 'Description of the character is not yet available...',
@@ -33,7 +50,7 @@ const useMarvelService = () => {
       }
    }
 
-   const getComics = async (id) => {
+   const getComics = async (id: number) => {
       const res = await request(`${_apiBase}comics/${id}?${_apiKey}`);
       return _transformComics(res.data.results[0]);
    }
@@ -43,8 +60,22 @@ const useMarvelService = () => {
       return res.data.results.map(_transformComics);
    }
 
+   //! Исправить ANY
 
-   const _transformComics = (comics) => {
+   interface Comics {
+      title: string;
+      description: string;
+      thumbnail: {
+         path: string;
+         extension: string;
+      };
+      pageCount: number;
+      language: string;
+      id: number;
+      prices: any;
+   }
+
+   const _transformComics = (comics: Comics) => {
       return {
          thumbnail: comics.thumbnail.path + '.' + comics.thumbnail.extension,
          title: comics.title,

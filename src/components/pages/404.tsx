@@ -2,7 +2,7 @@ import ErrorMessage from "../errorMessage/errorMessage"
 import { Link } from "react-router-dom"
 
 
-const Page404 = () => {
+const Page404: React.FC = () => {
    return (
       <div>
          <ErrorMessage />

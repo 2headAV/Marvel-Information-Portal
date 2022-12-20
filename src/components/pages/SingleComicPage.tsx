@@ -7,9 +7,9 @@ import ErrorMessage from '../errorMessage/errorMessage';
 
 import './singleComicPage.scss';
 
-const SingleComicPage = () => {
+const SingleComicPage: React.FC = () => {
    const { comicId } = useParams();
-   const [comic, setComic] = useState(null);
+   const [comic, setComic] = useState<Comic>();
    const { loading, error, getComics, clearError } = useMarvelService();
 
 
@@ -23,7 +23,7 @@ const SingleComicPage = () => {
          .then(onComicLoaded)
    }
 
-   const onComicLoaded = (comic) => {
+   const onComicLoaded = (comic: Comic) => {
       setComic(comic);
    }
 
@@ -40,7 +40,20 @@ const SingleComicPage = () => {
    )
 }
 
-const View = ({ comic }) => {
+type Comic = {
+   title: string;
+   description: string;
+   pageCount: string;
+   thumbnail: string;
+   language: string;
+   prices: string;
+}
+
+interface ComicProps {
+   comic: Comic
+}
+
+const View: React.FC<ComicProps> = ({ comic }) => {
    const { title, description, pageCount, thumbnail, language, prices } = comic;
    return (
       <div className="single-comic">

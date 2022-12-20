@@ -9,9 +9,9 @@ import decoration from '../../resources/img/vision.png';
 const MainPage = () => {
 
 
-   const [selectedChar, setChar] = useState(null);
+   const [selectedChar, setChar] = useState<number>(0);
 
-   const onCharSelected = (id) => {
+   const onCharSelected = (id: number) => {
       setChar(id);
    }
 

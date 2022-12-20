@@ -7,9 +7,15 @@ import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 
 
-const RandomChar = () => {
+const RandomChar: React.FC = () => {
 
-    const [char, setChar] = useState({});
+    const [char, setChar] = useState<Char>({
+        name: '',
+        description: '',
+        thumbnail: '',
+        homepage: '',
+        wiki: ''
+    });
 
     const { loading, error, getCharacter, clearError } = useMarvelService();
 
@@ -22,7 +28,7 @@ const RandomChar = () => {
         }
     }, [])
 
-    const onCharLoaded = (char) => {
+    const onCharLoaded = (char: Char) => {
         setChar(char);
     }
 
@@ -60,12 +66,26 @@ const RandomChar = () => {
     )
 }
 
-const View = ({ char }) => {
+interface Char {
+    name: string;
+    description: string;
+    thumbnail: string;
+    homepage: string;
+    wiki: string;
+}
+
+type CharProps = {
+    char: Char
+}
+
+const View: React.FC<CharProps> = ({ char }) => {
     const { name, description, thumbnail, homepage, wiki } = char;
 
-    let imgStyle = { 'objectFit': 'cover' };
+    let imgStyle = {};
     if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
         imgStyle = { 'objectFit': 'contain' };
+    } else {
+        imgStyle = { 'objectFit': 'cover' };
     }
     return (
         <div className="randomchar__block">

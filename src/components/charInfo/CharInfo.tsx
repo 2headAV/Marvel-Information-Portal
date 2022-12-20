@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 
 import useMarvelService from '../../services/MarvelServices';
 import Spinner from '../spinner/Spinner';
@@ -8,28 +7,30 @@ import Skeleton from '../skeleton/Skeleton'
 
 import './charInfo.scss';
 
-const CharInfo = (props) => {
+type CharInfoProps = {
+    charId: number
+}
 
-    const [char, setChar] = useState(null);
+const CharInfo: React.FC<CharInfoProps> = ({ charId }) => {
+
+    const [char, setChar] = useState<Char>();
 
     const { loading, error, getCharacter, clearError } = useMarvelService();
 
     useEffect(() => {
         updateChar();
-    }, [props.charId])
+    }, [charId])
 
     const updateChar = () => {
-        const { charId } = props;
         if (!charId) {
             return;
         }
-
         clearError();
         getCharacter(charId)
             .then(onCharLoaded)
     }
 
-    const onCharLoaded = (char) => {
+    const onCharLoaded = (char: Char) => {
         setChar(char);
     }
 
@@ -49,12 +50,33 @@ const CharInfo = (props) => {
     )
 }
 
-const View = ({ char }) => {
+export interface Char {
+    name: string;
+    description: string;
+    thumbnail: string;
+    homepage: string;
+    wiki: string;
+    comics: [
+        { name: string | null }
+    ];
+}
+
+type CharProps = {
+    char: Char
+}
+
+const View: React.FC<CharProps> = ({ char }) => {
     const { name, description, thumbnail, homepage, wiki, comics } = char;
 
-    let imgStyle = { 'objectFit': 'cover' };
+    console.log(char);
+
+    let imgStyle = {};
+
     if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
         imgStyle = { 'objectFit': 'contain' };
+    }
+    else {
+        imgStyle = { 'objectFit': 'cover' }
     }
 
     return (
@@ -78,9 +100,8 @@ const View = ({ char }) => {
             </div>
             <div className="char__comics">Comics:</div>
             <ul className="char__comics-list">
-                {comics.length > 0 ? null : 'There is no comics with this character'}
-                {
-                    comics.map((item, i) => {
+                {comics === null ? 'There is no comics with this character' :
+                    comics.map((item, i: number) => {
                         // eslint-disable-next-line
                         if (i > 9) return;
                         return (
@@ -95,9 +116,6 @@ const View = ({ char }) => {
     )
 }
 
-CharInfo.propTypes = {
-    charId: PropTypes.number
-}
 
 export default CharInfo;
 
